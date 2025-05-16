@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Scales</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #fafafa;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #1a1a1a;
+        }
+
+        .color-section {
+            margin-bottom: 3rem;
+        }
+
+        .color-name {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+            text-transform: capitalize;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .color-swatch {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 200px;
+            transition: transform 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .color-swatch:hover {
+            transform: translateY(-2px);
+        }
+
+        .color-box {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 0.5rem;
+        }
+        .color-label {
+            color: rgba(0, 0, 0, 0.7);
+            font-size: 0.75rem;
+            color: white;
+            font-weight: 500;
+        }
+
+        .scale-label {
+            position: absolute;
+            color: white;
+            top: 0;
+            left: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* IKAS */
+                /* Slate */
+        .slate-ikas-50 { background-color: #f8fafc; }
+        .slate-ikas-100 { background-color: #eef2f6; }
+        .slate-ikas-200 { background-color: #e3e8ef; }
+        .slate-ikas-300 { background-color: #cdd5df; }
+        .slate-ikas-400 { background-color: #9aa4b2; }
+        .slate-ikas-500 { background-color: #697586; }
+        .slate-ikas-600 { background-color: #4b5565; }
+        .slate-ikas-700 { background-color: #364152; }
+        .slate-ikas-800 { background-color: #242b36; }
+        .slate-ikas-900 { background-color: #121926; }
+
+        /* Neutral */
+        .neutral-ikas-50 { background-color: #fafafa; }
+        .neutral-ikas-100 { background-color: #f6f6f6; }
+        .neutral-ikas-200 { background-color: #ececed; }
+        .neutral-ikas-300 { background-color: #c4c4c6; }
+        .neutral-ikas-400 { background-color: #9c9c9f; }
+        .neutral-ikas-500 { background-color: #727276; }
+        .neutral-ikas-600 { background-color: #4a4a4f; }
+        .neutral-ikas-700 { background-color: #2e2e33; }
+        .neutral-ikas-800 { background-color: #202025; }
+        .neutral-ikas-900 { background-color: #14141a; }
+
+        /* Indigo */
+        .indigo-ikas-50 { background-color: #f7f5ff; }
+        .indigo-ikas-100 { background-color: #efedff; }
+        .indigo-ikas-200 { background-color: #d5cdff; }
+        .indigo-ikas-300 { background-color: #b2a4ff; }
+        .indigo-ikas-400 { background-color: #8e7aff; }
+        .indigo-ikas-500 { background-color: #6f55ff; }
+        .indigo-ikas-600 { background-color: #5a44d5; }
+        .indigo-ikas-700 { background-color: #4533ab; }
+        .indigo-ikas-800 { background-color: #312280; }
+        .indigo-ikas-900 { background-color: #261a6b; }
+
+        /* Lime */
+        .lime-ikas-50 { background-color: #fcfef1; }
+        .lime-ikas-100 { background-color: #f8fee3; }
+        .lime-ikas-200 { background-color: #f2fdc8; }
+        .lime-ikas-300 { background-color: #ebfbac; }
+        .lime-ikas-400 { background-color: #e5fa91; }
+        .lime-ikas-500 { background-color: #dcfb6e; }
+        .lime-ikas-600 { background-color: #cce85f; }
+        .lime-ikas-700 { background-color: #bad749; }
+        .lime-ikas-800 { background-color: #a9c733; }
+        .lime-ikas-900 { background-color: #97b61d; }
+
+        /* Fuchsia */
+        .fuchsia-ikas-50 { background-color: #fdf2fa; }
+        .fuchsia-ikas-100 { background-color: #f9deef; }
+        .fuchsia-ikas-200 { background-color: #f4c4e3; }
+        .fuchsia-ikas-300 { background-color: #eb97ce; }
+        .fuchsia-ikas-400 { background-color: #e679bf; }
+        .fuchsia-ikas-500 { background-color: #e05bb1; }
+        .fuchsia-ikas-600 { background-color: #c04b97; }
+        .fuchsia-ikas-700 { background-color: #c04b97; }
+        .fuchsia-ikas-800 { background-color: #a03b7c; }
+        .fuchsia-ikas-900 { background-color: #7f2c62; }
+
+        /* Red */
+        .red-ikas-50 { background-color: #fff5f6; }
+        .red-ikas-100 { background-color: #ffd8da; }
+        .red-ikas-200 { background-color: #fecdca; }
+        .red-ikas-300 { background-color: #ff8a91; }
+        .red-ikas-400 { background-color: #ff636d; }
+        .red-ikas-500 { background-color: #ff3c48; }
+        .red-ikas-600 { background-color: #db303b; }
+        .red-ikas-700 { background-color: #b7242d; }
+        .red-ikas-800 { background-color: #931820; }
+        .red-ikas-900 { background-color: #76131a; }
+
+        /* Amber */
+        .amber-ikas-50 { background-color: #fef8f0; }
+        .amber-ikas-100 { background-color: #fde9ce; }
+        .amber-ikas-200 { background-color: #fddeb5; }
+        .amber-ikas-300 { background-color: #fcd39d; }
+        .amber-ikas-400 { background-color: #fabc6b; }
+        .amber-ikas-500 { background-color: #f9a63a; }
+        .amber-ikas-600 { background-color: #f79009; }
+        .amber-ikas-700 { background-color: #c67307; }
+        .amber-ikas-800 { background-color: #945605; }
+        .amber-ikas-900 { background-color: #633a04; }
+
+        /* Green */
+        .green-ikas-50 { background-color: #f0fdf5; }
+        .green-ikas-100 { background-color: #d1fadf; }
+        .green-ikas-200 { background-color: #a6f4c5; }
+        .green-ikas-300 { background-color: #6ce9a6; }
+        .green-ikas-400 { background-color: #32d583; }
+        .green-ikas-500 { background-color: #12b76a; }
+        .green-ikas-600 { background-color: #039855; }
+        .green-ikas-700 { background-color: #027a48; }
+        .green-ikas-800 { background-color: #05603a; }
+        .green-ikas-900 { background-color: #054f31; }
+        /* Blue */
+        .blue-ikas-50 { background-color: #f2f9fe; }
+        .blue-ikas-100 { background-color: #e7f8ff; }
+        .blue-ikas-200 { background-color: #c1e3fb; }
+        .blue-ikas-300 { background-color: #8fccf8; }
+        .blue-ikas-400 { background-color: #4cadf4; }
+        .blue-ikas-500 { background-color: #2a9ef2; }
+        .blue-ikas-600 { background-color: #2388d1; }
+        .blue-ikas-700 { background-color: #1b71af; }
+        .blue-ikas-800 { background-color: #145b8e; }
+        .blue-ikas-900 { background-color: #10507d; }
+
+        /* HUE */
+        .slate-hue-50 { background-color: hsl(209.6,40%,98%); }
+        .slate-hue-100 { background-color: hsl(209.6,40%,96.1%); }
+        .slate-hue-200 { background-color: hsl(213.9,31.8%,91.4%); }
+        .slate-hue-300 { background-color: hsl(212.3,26.8%,83.9%); }
+        .slate-hue-400 { background-color: hsl(214.6,20.2%,65.1%); }
+        .slate-hue-500 { background-color: hsl(215,16.3%,46.9%); }
+        .slate-hue-600 { background-color: hsl(214.9,19.3%,34.5%); }
+        .slate-hue-700 { background-color: hsl(214.9,25%,26.7%); }
+        .slate-hue-800 { background-color: hsl(216.8,32.6%,17.5%); }
+        .slate-hue-900 { background-color: hsl(221.8,47.4%,11.2%); }
+        .slate-hue-950 { background-color: hsl(221.8,84%,4.9%); }
+        .neutral-hue-50 { background-color: hsl(240,0%,98%); }
+        .neutral-hue-100 { background-color: hsl(240,0%,96.1%); }
+        .neutral-hue-200 { background-color: hsl(240,0%,89.8%); }
+        .neutral-hue-300 { background-color: hsl(240,0%,83.1%); }
+        .neutral-hue-400 { background-color: hsl(240,0%,63.9%); }
+        .neutral-hue-500 { background-color: hsl(240,0%,45.1%); }
+        .neutral-hue-600 { background-color: hsl(240,0%,32.2%); }
+        .neutral-hue-700 { background-color: hsl(240,0%,25.1%); }
+        .neutral-hue-800 { background-color: hsl(240,0%,14.9%); }
+        .neutral-hue-900 { background-color: hsl(240,0%,9%); }
+        .neutral-hue-950 { background-color: hsl(240,0%,3.9%); }
+        .indigo-hue-50 { background-color: hsl(236.2,100%,96.7%); }
+        .indigo-hue-100 { background-color: hsl(238.3,96.5%,88.8%); }
+        .indigo-hue-200 { background-color: hsl(240,93.5%,81.8%); }
+        .indigo-hue-300 { background-color: hsl(244.8,89.5%,73.9%); }
+        .indigo-hue-400 { background-color: hsl(249,83.5%,66.7%); }
+        .indigo-hue-500 { background-color: hsl(253.7,75.4%,58.6%); }
+        .indigo-hue-600 { background-color: hsl(254.8,57.9%,50.6%); }
+        .indigo-hue-700 { background-color: hsl(254,54.5%,41.4%); }
+        .indigo-hue-800 { background-color: hsl(252.5,47.4%,34.3%); }
+        .indigo-hue-900 { background-color: hsl(252.5,47.4%,34.3%); }
+        .indigo-hue-950 { background-color: hsl(254.1,47.1%,20%); }
+        .red-hue-50 { background-color: hsl(356,85.7%,97.3%); }
+        .red-hue-100 { background-color: hsl(356,96.3%,89.4%); }
+        .red-hue-200 { background-color: hsl(356,93.5%,81.8%); }
+        .red-hue-300 { background-color: hsl(356,90.6%,70.8%); }
+        .red-hue-400 { background-color: hsl(356,90.6%,70.8%); }
+        .red-hue-500 { background-color: hsl(356,84.2%,60.2%); }
+        .red-hue-600 { background-color: hsl(356,72.2%,50.6%); }
+        .red-hue-700 { background-color: hsl(356,73.7%,41.8%); }
+        .red-hue-800 { background-color: hsl(356,70%,35.3%); }
+        .red-hue-900 { background-color: hsl(356,62.8%,30.6%); }
+        .red-hue-950 { background-color: hsl(356,74.7%,15.5%); }
+        .lime-hue-50 { background-color: hsl(67.6,92%,95.1%); }
+        .lime-hue-100 { background-color: hsl(70.2,88.5%,79.6%); }
+        .lime-hue-200 { background-color: hsl(71.3,84.5%,67.1%); }
+        .lime-hue-300 { background-color: hsl(72,78%,55.5%); }
+        .lime-hue-400 { background-color: hsl(73,80.5%,44.3%); }
+        .lime-hue-500 { background-color: hsl(74.1,85.2%,34.5%); }
+        .lime-hue-600 { background-color: hsl(75.2,78.4%,27.3%); }
+        .lime-hue-700 { background-color: hsl(75.6,69%,22.7%); }
+        .lime-hue-800 { background-color: hsl(76.9,61.2%,20.2%); }
+        .lime-hue-900 { background-color: hsl(78.6,80.4%,10%); }
+        .lime-hue-950 { background-color: hsl(78.6,80.4%,10%); }
+        .blue-hue-50 { background-color: hsl(201.6,100%,96.9%); }
+        .blue-hue-100 { background-color: hsl(201.1,96.9%,87.3%); }
+        .blue-hue-200 { background-color: hsl(199.5,96.4%,78.4%); }
+        .blue-hue-300 { background-color: hsl(200.9,93.9%,67.8%); }
+        .blue-hue-400 { background-color: hsl(205,91.2%,59.8%); }
+        .blue-hue-500 { background-color: hsl(209,83.2%,53.3%); }
+        .blue-hue-600 { background-color: hsl(212.1,76.3%,48%); }
+        .blue-hue-700 { background-color: hsl(213.7,70.7%,40.2%); }
+        .blue-hue-800 { background-color: hsl(212.2,64.3%,32.9%); }
+        .blue-hue-900 { background-color: hsl(214,57%,21%); }
+        .blue-hue-950 { background-color: hsl(214,57%,21%); }
+        .fuchsia-hue-50 { background-color: hsl(317.9,100%,97.8%); }
+        .fuchsia-hue-100 { background-color: hsl(317.1,95.8%,90.6%); }
+        .fuchsia-hue-200 { background-color: hsl(319.9,93.1%,82.9%); }
+        .fuchsia-hue-300 { background-color: hsl(320.8,91.4%,72.5%); }
+        .fuchsia-hue-400 { background-color: hsl(321,84.1%,60.6%); }
+        .fuchsia-hue-500 { background-color: hsl(322.2,69.5%,48.8%); }
+        .fuchsia-hue-600 { background-color: hsl(323.5,72.4%,39.8%); }
+        .fuchsia-hue-700 { background-color: hsl(324.2,70.2%,32.9%); }
+        .fuchsia-hue-800 { background-color: hsl(325.5,63.6%,28%); }
+        .fuchsia-hue-900 { background-color: hsl(325.6,90.2%,16.1%); }
+        .fuchsia-hue-950 { background-color: hsl(325.6,90.2%,16.1%); }
+        .amber-hue-50 { background-color: hsl(44.3,100%,96.1%); }
+        .amber-hue-100 { background-color: hsl(44.3,96.6%,76.7%); }
+        .amber-hue-200 { background-color: hsl(42.2,96.7%,64.5%); }
+        .amber-hue-300 { background-color: hsl(39.6,96.4%,56.3%); }
+        .amber-hue-400 { background-color: hsl(34,92.1%,50.2%); }
+        .amber-hue-500 { background-color: hsl(28.4,94.6%,43.7%); }
+        .amber-hue-600 { background-color: hsl(22.3,90.5%,37.1%); }
+        .amber-hue-700 { background-color: hsl(19,82.5%,31.4%); }
+        .amber-hue-800 { background-color: hsl(18,77.8%,26.5%); }
+        .amber-hue-900 { background-color: hsl(17.2,91.7%,14.1%); }
+        .amber-hue-950 { background-color: hsl(17.2,91.7%,14.1%); }
+        .green-hue-50 { background-color: hsl(148.4,76.5%,96.7%); }
+        .green-hue-100 { background-color: hsl(150.9,78.9%,85.1%); }
+        .green-hue-200 { background-color: hsl(151.6,76.6%,73.1%); }
+        .green-hue-300 { background-color: hsl(151.8,69.2%,58%); }
+        .green-hue-400 { background-color: hsl(152,70.6%,45.3%); }
+        .green-hue-500 { background-color: hsl(152,76.2%,36.3%); }
+        .green-hue-600 { background-color: hsl(152.3,71.8%,29.2%); }
+        .green-hue-700 { background-color: hsl(152.7,64.2%,24.1%); }
+        .green-hue-800 { background-color: hsl(153.7,61.2%,20.2%); }
+        .green-hue-900 { background-color: hsl(154.8,80.4%,10%); }
+        .green-hue-950 { background-color: hsl(154.8,80.4%,10%); }
+
+        /* SHADCN */
+        .slate-shadcn-50 { background-color: hsl(210,40%,98%); }
+        .slate-shadcn-100 { background-color: hsl(210,40%,96.1%); }
+        .slate-shadcn-200 { background-color: hsl(214.3,31.8%,91.4%); }
+        .slate-shadcn-300 { background-color: hsl(212.7,26.8%,83.9%); }
+        .slate-shadcn-400 { background-color: hsl(215,20.2%,65.1%); }
+        .slate-shadcn-500 { background-color: hsl(215.4,16.3%,46.9%); }
+        .slate-shadcn-600 { background-color: hsl(215.3,19.3%,34.5%); }
+        .slate-shadcn-700 { background-color: hsl(215.3,25%,26.7%); }
+        .slate-shadcn-800 { background-color: hsl(217.2,32.6%,17.5%); }
+        .slate-shadcn-900 { background-color: hsl(222.2,47.4%,11.2%); }
+        .slate-shadcn-950 { background-color: hsl(222.2,84%,4.9%); }
+        .neutral-shadcn-50 { background-color: hsl(0,0%,98%); }
+        .neutral-shadcn-100 { background-color: hsl(0,0%,96.1%); }
+        .neutral-shadcn-200 { background-color: hsl(0,0%,89.8%); }
+        .neutral-shadcn-300 { background-color: hsl(0,0%,83.1%); }
+        .neutral-shadcn-400 { background-color: hsl(0,0%,63.9%); }
+        .neutral-shadcn-500 { background-color: hsl(0,0%,45.1%); }
+        .neutral-shadcn-600 { background-color: hsl(0,0%,32.2%); }
+        .neutral-shadcn-700 { background-color: hsl(0,0%,25.1%); }
+        .neutral-shadcn-800 { background-color: hsl(0,0%,14.9%); }
+        .neutral-shadcn-900 { background-color: hsl(0,0%,9%); }
+        .neutral-shadcn-950 { background-color: hsl(0,0%,3.9%); }
+        .indigo-shadcn-50 { background-color: hsl(226,100%,97%); }
+        .indigo-shadcn-100 { background-color: hsl(226,100%,94%); }
+        .indigo-shadcn-200 { background-color: hsl(228,96.5%,88.8%); }
+        .indigo-shadcn-300 { background-color: hsl(229.7,93.5%,81.8%); }
+        .indigo-shadcn-400 { background-color: hsl(234.5,89.5%,73.9%); }
+        .indigo-shadcn-500 { background-color: hsl(238.7,83.5%,66.7%); }
+        .indigo-shadcn-600 { background-color: hsl(243.4,75.4%,58.6%); }
+        .indigo-shadcn-700 { background-color: hsl(244.5,57.9%,50.6%); }
+        .indigo-shadcn-800 { background-color: hsl(243.7,54.5%,41.4%); }
+        .indigo-shadcn-900 { background-color: hsl(242.2,47.4%,34.3%); }
+        .indigo-shadcn-950 { background-color: hsl(243.8,47.1%,20%); }
+        .red-shadcn-50 { background-color: hsl(0,85.7%,97.3%); }
+        .red-shadcn-100 { background-color: hsl(0,86%,97%); }
+        .red-shadcn-200 { background-color: hsl(0,96.3%,89.4%); }
+        .red-shadcn-300 { background-color: hsl(0,93.5%,81.8%); }
+        .red-shadcn-400 { background-color: hsl(0,90.6%,70.8%); }
+        .red-shadcn-500 { background-color: hsl(0,84.2%,60.2%); }
+        .red-shadcn-600 { background-color: hsl(0,72.2%,50.6%); }
+        .red-shadcn-700 { background-color: hsl(0,73.7%,41.8%); }
+        .red-shadcn-800 { background-color: hsl(0,70%,35.3%); }
+        .red-shadcn-900 { background-color: hsl(0,62.8%,30.6%); }
+        .red-shadcn-950 { background-color: hsl(0,74.7%,15.5%); }
+        .lime-shadcn-50 { background-color: hsl(78.3,92%,95.1%); }
+        .lime-shadcn-100 { background-color: hsl(79.6,89.1%,89.2%); }
+        .lime-shadcn-200 { background-color: hsl(80.9,88.5%,79.6%); }
+        .lime-shadcn-300 { background-color: hsl(82,84.5%,67.1%); }
+        .lime-shadcn-400 { background-color: hsl(82.7,78%,55.5%); }
+        .lime-shadcn-500 { background-color: hsl(83.7,80.5%,44.3%); }
+        .lime-shadcn-600 { background-color: hsl(84.8,85.2%,34.5%); }
+        .lime-shadcn-700 { background-color: hsl(85.9,78.4%,27.3%); }
+        .lime-shadcn-800 { background-color: hsl(86.3,69%,22.7%); }
+        .lime-shadcn-900 { background-color: hsl(87.6,61.2%,20.2%); }
+        .lime-shadcn-950 { background-color: hsl(89.3,80.4%,10%); }
+        .blue-shadcn-50 { background-color: hsl(213.8,100%,96.9%); }
+        .blue-shadcn-100 { background-color: hsl(214.3,94.6%,92.7%); }
+        .blue-shadcn-200 { background-color: hsl(213.3,96.9%,87.3%); }
+        .blue-shadcn-300 { background-color: hsl(213.1,93.9%,67.8%); }
+        .blue-shadcn-400 { background-color: hsl(217.2,91.2%,59.8%); }
+        .blue-shadcn-500 { background-color: hsl(221.2,83.2%,53.3%); }
+        .blue-shadcn-600 { background-color: hsl(224.3,76.3%,48%); }
+        .blue-shadcn-700 { background-color: hsl(225.9,70.7%,40.2%); }
+        .blue-shadcn-800 { background-color: hsl(224.4,64.3%,32.9%); }
+        .blue-shadcn-900 { background-color: hsl(226.2,57%,21%); }
+        .blue-shadcn-950 { background-color: hsl(226.2,57%,21%); }
+        .fuchsia-shadcn-50 { background-color: hsl(289.1,100%,97.8%); }
+        .fuchsia-shadcn-100 { background-color: hsl(287,100%,95.5%); }
+        .fuchsia-shadcn-200 { background-color: hsl(288.3,95.8%,90.6%); }
+        .fuchsia-shadcn-300 { background-color: hsl(291.1,93.1%,82.9%); }
+        .fuchsia-shadcn-400 { background-color: hsl(292,91.4%,72.5%); }
+        .fuchsia-shadcn-500 { background-color: hsl(292.2,84.1%,60.6%); }
+        .fuchsia-shadcn-600 { background-color: hsl(293.4,69.5%,48.8%); }
+        .fuchsia-shadcn-700 { background-color: hsl(294.7,72.4%,39.8%); }
+        .fuchsia-shadcn-800 { background-color: hsl(295.4,70.2%,32.9%); }
+        .fuchsia-shadcn-900 { background-color: hsl(296.7,63.6%,28%); }
+        .fuchsia-shadcn-950 { background-color: hsl(296.8,90.2%,16.1%); }
+        .amber-shadcn-50 { background-color: hsl(48,100%,96.1%); }
+        .amber-shadcn-100 { background-color: hsl(48,96.5%,88.8%); }
+        .amber-shadcn-200 { background-color: hsl(48,96.6%,76.7%); }
+        .amber-shadcn-300 { background-color: hsl(45.9,96.7%,64.5%); }
+        .amber-shadcn-400 { background-color: hsl(43.3,96.4%,56.3%); }
+        .amber-shadcn-500 { background-color: hsl(37.7,92.1%,50.2%); }
+        .amber-shadcn-600 { background-color: hsl(32.1,94.6%,43.7%); }
+        .amber-shadcn-700 { background-color: hsl(26,90.5%,37.1%); }
+        .amber-shadcn-800 { background-color: hsl(22.7,82.5%,31.4%); }
+        .amber-shadcn-900 { background-color: hsl(21.7,77.8%,26.5%); }
+        .amber-shadcn-950 { background-color: hsl(20.9,91.7%,14.1%); }
+        .green-shadcn-50 { background-color: hsl(138.5,76.5%,96.7%); }
+        .green-shadcn-100 { background-color: hsl(140.6,84.2%,92.5%); }
+        .green-shadcn-200 { background-color: hsl(141,78.9%,85.1%); }
+        .green-shadcn-300 { background-color: hsl(141.7,76.6%,73.1%); }
+        .green-shadcn-400 { background-color: hsl(141.9,69.2%,58%); }
+        .green-shadcn-500 { background-color: hsl(142.1,70.6%,45.3%); }
+        .green-shadcn-600 { background-color: hsl(142.1,76.2%,36.3%); }
+        .green-shadcn-700 { background-color: hsl(142.4,71.8%,29.2%); }
+        .green-shadcn-800 { background-color: hsl(142.8,64.2%,24.1%); }
+        .green-shadcn-900 { background-color: hsl(143.8,61.2%,20.2%); }
+        .green-shadcn-950 { background-color: hsl(144.9,80.4%,10%); }
+
+    </style>
+</head>
+<body>
+    <style>
+        .legend {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px 30px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .legend h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+            font-size: 1.5rem;
+        }
+        
+        .legend ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .legend li {
+            margin-bottom: 10px;
+            color: #4a5568;
+            line-height: 1.5;
+        }
+        
+        .legend strong {
+            color: #2d3748;
+            margin-right: 8px;
+        }
+        
+        .legend p {
+            margin-top: 15px;
+            margin-bottom: 0;
+            color: #718096;
+            font-style: italic;
+        }
+    </style>
+
+    <div class="legend">
+        <h2>Legend</h2>
+        <ul>
+            <li><strong>ikas:</strong> Original color scale used in the ikas design system</li>
+            <li><strong>ikas-hue:</strong> Color scale generated using consistent hue values</li>
+            <li><strong>shadcn:</strong> Color scale from the shadcn/ui design system for comparison</li>
+        </ul>
+        <p>Each row shows the same color at different scale values (50-950), allowing comparison between the different color systems.</p>
+    </div>
+    <div class="container">
+        <h1>Color Scales</h1>
+        
+        <div class="color-section">
+            <h2 class="color-name">slate</h2>
+            <div class="color-grid">
+                <div class="color-swatch">
+                    <div class="color-box slate-ikas-50">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box slate-hue-50">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box slate-shadcn-50">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">50</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box slate-ikas-100">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box slate-hue-100">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box slate-shadcn-100">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">100</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box slate-ikas-200">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box slate-hue-200">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box slate-shadcn-200">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">200</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box slate-ikas-300">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box slate-hue-300">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box slate-shadcn-300">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">300</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box slate-ikas-400">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box slate-hue-400">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box slate-shadcn-400">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">400</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box slate-ikas-500">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box slate-hue-500">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box slate-shadcn-500">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">500</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box slate-ikas-600">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box slate-hue-600">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box slate-shadcn-600">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">600</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box slate-ikas-700">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box slate-hue-700">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box slate-shadcn-700">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">700</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box slate-ikas-800">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box slate-hue-800">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box slate-shadcn-800">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">800</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box slate-ikas-900">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box slate-hue-900">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box slate-shadcn-900">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">900</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box slate-ikas-950">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box slate-hue-950">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box slate-shadcn-950">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">950</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="color-section">
+            <h2 class="color-name">neutral</h2>
+            <div class="color-grid">
+                <div class="color-swatch">
+                    <div class="color-box neutral-ikas-50">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box neutral-hue-50">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box neutral-shadcn-50">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">50</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box neutral-ikas-100">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box neutral-hue-100">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box neutral-shadcn-100">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">100</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box neutral-ikas-200">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box neutral-hue-200">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box neutral-shadcn-200">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">200</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box neutral-ikas-300">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box neutral-hue-300">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box neutral-shadcn-300">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">300</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box neutral-ikas-400">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box neutral-hue-400">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box neutral-shadcn-400">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">400</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box neutral-ikas-500">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box neutral-hue-500">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box neutral-shadcn-500">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">500</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box neutral-ikas-600">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box neutral-hue-600">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box neutral-shadcn-600">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">600</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box neutral-ikas-700">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box neutral-hue-700">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box neutral-shadcn-700">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">700</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box neutral-ikas-800">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box neutral-hue-800">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box neutral-shadcn-800">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">800</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box neutral-ikas-900">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box neutral-hue-900">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box neutral-shadcn-900">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">900</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box neutral-ikas-950">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box neutral-hue-950">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box neutral-shadcn-950">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">950</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="color-section">
+            <h2 class="color-name">indigo</h2>
+            <div class="color-grid">
+                <div class="color-swatch">
+                    <div class="color-box indigo-ikas-50">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box indigo-hue-50">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box indigo-shadcn-50">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">50</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box indigo-ikas-100">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box indigo-hue-100">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box indigo-shadcn-100">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">100</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box indigo-ikas-200">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box indigo-hue-200">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box indigo-shadcn-200">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">200</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box indigo-ikas-300">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box indigo-hue-300">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box indigo-shadcn-300">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">300</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box indigo-ikas-400">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box indigo-hue-400">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box indigo-shadcn-400">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">400</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box indigo-ikas-500">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box indigo-hue-500">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box indigo-shadcn-500">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">500</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box indigo-ikas-600">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box indigo-hue-600">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box indigo-shadcn-600">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">600</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box indigo-ikas-700">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box indigo-hue-700">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box indigo-shadcn-700">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">700</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box indigo-ikas-800">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box indigo-hue-800">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box indigo-shadcn-800">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">800</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box indigo-ikas-900">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box indigo-hue-900">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box indigo-shadcn-900">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">900</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box indigo-ikas-950">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box indigo-hue-950">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box indigo-shadcn-950">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">950</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="color-section">
+            <h2 class="color-name">red</h2>
+            <div class="color-grid">
+                <div class="color-swatch">
+                    <div class="color-box red-ikas-50">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box red-hue-50">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box red-shadcn-50">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">50</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box red-ikas-100">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box red-hue-100">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box red-shadcn-100">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">100</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box red-ikas-200">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box red-hue-200">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box red-shadcn-200">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">200</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box red-ikas-300">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box red-hue-300">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box red-shadcn-300">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">300</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box red-ikas-400">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box red-hue-400">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box red-shadcn-400">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">400</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box red-ikas-500">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box red-hue-500">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box red-shadcn-500">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">500</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box red-ikas-600">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box red-hue-600">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box red-shadcn-600">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">600</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box red-ikas-700">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box red-hue-700">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box red-shadcn-700">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">700</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box red-ikas-800">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box red-hue-800">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box red-shadcn-800">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">800</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box red-ikas-900">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box red-hue-900">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box red-shadcn-900">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">900</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box red-ikas-950">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box red-hue-950">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box red-shadcn-950">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">950</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="color-section">
+            <h2 class="color-name">lime</h2>
+            <div class="color-grid">
+                <div class="color-swatch">
+                    <div class="color-box lime-ikas-50">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box lime-hue-50">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box lime-shadcn-50">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">50</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box lime-ikas-100">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box lime-hue-100">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box lime-shadcn-100">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">100</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box lime-ikas-200">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box lime-hue-200">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box lime-shadcn-200">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">200</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box lime-ikas-300">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box lime-hue-300">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box lime-shadcn-300">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">300</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box lime-ikas-400">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box lime-hue-400">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box lime-shadcn-400">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">400</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box lime-ikas-500">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box lime-hue-500">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box lime-shadcn-500">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">500</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box lime-ikas-600">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box lime-hue-600">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box lime-shadcn-600">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">600</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box lime-ikas-700">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box lime-hue-700">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box lime-shadcn-700">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">700</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box lime-ikas-800">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box lime-hue-800">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box lime-shadcn-800">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">800</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box lime-ikas-900">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box lime-hue-900">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box lime-shadcn-900">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">900</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box lime-ikas-950">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box lime-hue-950">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box lime-shadcn-950">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">950</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="color-section">
+            <h2 class="color-name">blue</h2>
+            <div class="color-grid">
+                <div class="color-swatch">
+                    <div class="color-box blue-ikas-50">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box blue-hue-50">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box blue-shadcn-50">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">50</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box blue-ikas-100">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box blue-hue-100">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box blue-shadcn-100">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">100</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box blue-ikas-200">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box blue-hue-200">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box blue-shadcn-200">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">200</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box blue-ikas-300">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box blue-hue-300">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box blue-shadcn-300">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">300</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box blue-ikas-400">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box blue-hue-400">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box blue-shadcn-400">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">400</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box blue-ikas-500">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box blue-hue-500">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box blue-shadcn-500">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">500</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box blue-ikas-600">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box blue-hue-600">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box blue-shadcn-600">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">600</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box blue-ikas-700">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box blue-hue-700">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box blue-shadcn-700">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">700</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box blue-ikas-800">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box blue-hue-800">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box blue-shadcn-800">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">800</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box blue-ikas-900">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box blue-hue-900">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box blue-shadcn-900">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">900</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box blue-ikas-950">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box blue-hue-950">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box blue-shadcn-950">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">950</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="color-section">
+            <h2 class="color-name">fuchsia</h2>
+            <div class="color-grid">
+                <div class="color-swatch">
+                    <div class="color-box fuchsia-ikas-50">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box fuchsia-hue-50">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box fuchsia-shadcn-50">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">50</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box fuchsia-ikas-100">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box fuchsia-hue-100">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box fuchsia-shadcn-100">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">100</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box fuchsia-ikas-200">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box fuchsia-hue-200">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box fuchsia-shadcn-200">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">200</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box fuchsia-ikas-300">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box fuchsia-hue-300">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box fuchsia-shadcn-300">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">300</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box fuchsia-ikas-400">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box fuchsia-hue-400">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box fuchsia-shadcn-400">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">400</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box fuchsia-ikas-500">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box fuchsia-hue-500">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box fuchsia-shadcn-500">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">500</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box fuchsia-ikas-600">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box fuchsia-hue-600">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box fuchsia-shadcn-600">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">600</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box fuchsia-ikas-700">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box fuchsia-hue-700">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box fuchsia-shadcn-700">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">700</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box fuchsia-ikas-800">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box fuchsia-hue-800">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box fuchsia-shadcn-800">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">800</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box fuchsia-ikas-900">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box fuchsia-hue-900">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box fuchsia-shadcn-900">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">900</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box fuchsia-ikas-950">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box fuchsia-hue-950">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box fuchsia-shadcn-950">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">950</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="color-section">
+            <h2 class="color-name">amber</h2>
+            <div class="color-grid">
+                <div class="color-swatch">
+                    <div class="color-box amber-ikas-50">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box amber-hue-50">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box amber-shadcn-50">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">50</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box amber-ikas-100">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box amber-hue-100">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box amber-shadcn-100">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">100</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box amber-ikas-200">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box amber-hue-200">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box amber-shadcn-200">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">200</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box amber-ikas-300">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box amber-hue-300">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box amber-shadcn-300">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">300</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box amber-ikas-400">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box amber-hue-400">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box amber-shadcn-400">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">400</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box amber-ikas-500">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box amber-hue-500">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box amber-shadcn-500">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">500</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box amber-ikas-600">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box amber-hue-600">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box amber-shadcn-600">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">600</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box amber-ikas-700">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box amber-hue-700">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box amber-shadcn-700">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">700</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box amber-ikas-800">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box amber-hue-800">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box amber-shadcn-800">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">800</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box amber-ikas-900">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box amber-hue-900">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box amber-shadcn-900">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">900</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box amber-ikas-950">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box amber-hue-950">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box amber-shadcn-950">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">950</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="color-section">
+            <h2 class="color-name">green</h2>
+            <div class="color-grid">
+                <div class="color-swatch">
+                    <div class="color-box green-ikas-50">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box green-hue-50">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box green-shadcn-50">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">50</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box green-ikas-100">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box green-hue-100">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box green-shadcn-100">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">100</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box green-ikas-200">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box green-hue-200">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box green-shadcn-200">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">200</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box green-ikas-300">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box green-hue-300">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box green-shadcn-300">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">300</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box green-ikas-400">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box green-hue-400">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box green-shadcn-400">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">400</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box green-ikas-500">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box green-hue-500">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box green-shadcn-500">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">500</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box green-ikas-600">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box green-hue-600">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box green-shadcn-600">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">600</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box green-ikas-700">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box green-hue-700">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box green-shadcn-700">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">700</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box green-ikas-800">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box green-hue-800">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box green-shadcn-800">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">800</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box green-ikas-900">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box green-hue-900">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box green-shadcn-900">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">900</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box green-ikas-950">
+                        <span class="color-label">ikas</span>
+                    </div>
+                    <div class="color-box green-hue-950">
+                        <span class="color-label">ikas-hue</span>
+                    </div>
+                    <div class="color-box green-shadcn-950">
+                        <span class="color-label">shadcn</span>
+                    </div>
+                    <span class="scale-label">950</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
